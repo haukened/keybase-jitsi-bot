@@ -82,7 +82,7 @@ func (b *bot) convHandler(m chat1.ConvSummary) {
 	default:
 		b.debug("New convID found %s, sending welcome message.", m.Id)
 	}
-	b.k.SendMessageByConvID(m.Id, "Hello there!! I'm the Jitsi meeting bot, made by @haukened\nI can start Jitsi meetings right here in this chat!\nI can be activated in 2 ways:\n    1. `@jitsibot`\n    2.`!jitsi`\nI also accept donations to offset hosting costs,\njust send some XLM to my wallet if you feel like it by typing `+5XLM@jitsibot`")
+	b.k.SendMessageByConvID(m.Id, "Hello there!! I'm the Jitsi meeting bot, made by @haukened\nI can start Jitsi meetings right here in this chat!\nI can be activated in 2 ways:\n    1. `@jitsibot meet`\n    2.`!jitsi`\nI also accept donations to offset hosting costs,\njust send some XLM to my wallet if you feel like it by typing `+5XLM@jitsibot`")
 }
 
 // this handles wallet events, like when someone send you money in chat
