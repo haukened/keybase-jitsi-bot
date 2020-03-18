@@ -62,11 +62,6 @@ func (b *bot) registerCommands() {
 						Description: "Starts a meet.jit.si meeting",
 						Usage:       "",
 					},
-					{
-						Name:        "meeting",
-						Description: "Starts a meet.jit.si meeting",
-						Usage:       "",
-					},
 				},
 			},
 		},
