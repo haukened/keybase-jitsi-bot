@@ -1,3 +1,5 @@
+[![Build](https://github.com/haukened/keybase-jitsi-bot/workflows/Build/badge.svg)](https://github.com/haukened/keybase-jitsi-bot/actions)
+
 # keybase-jitsi-bot
 A bot for Keybase that start Jitsi meetings
 
