@@ -53,8 +53,8 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       id: macos_build
       with:
-        name: boom-bot-${{ matrix.platform }}-${{ steps.vars.outputs.sha_short }}
-        path: boom-bot
+        name: jitsi-bot-${{ matrix.platform }}-${{ steps.vars.outputs.sha_short }}
+        path: jitsi-bot
 
     - name: Upload Artifacts
       if: matrix.platform == 'windows-latest'
@@ -62,23 +62,23 @@ jobs:
       id: windows_build
       with:
         SHA8: 
-        name: boom-bot-${{ matrix.platform }}-${{ steps.vars.outputs.sha_short }}
-        path: boom-bot.exe
+        name: jitsi-bot-${{ matrix.platform }}-${{ steps.vars.outputs.sha_short }}
+        path: jitsi-bot.exe
 
     - name: Upload Artifacts
       if: matrix.platform == 'ubuntu-latest'
       id: ubuntu_build
       uses: actions/upload-artifact@v1.0.0
       with:
-        name: boom-bot-${{ matrix.platform }}-${{ steps.vars.outputs.sha_short }}
-        path: boom-bot
+        name: jitsi-bot-${{ matrix.platform }}-${{ steps.vars.outputs.sha_short }}
+        path: jitsi-bot
 
     - name: Publish Docker Image
       if: success() && matrix.platform == 'ubuntu-latest'
       id: upload_docker
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: haukeness/boom-bot
+        name: haukeness/keybase-jitsi-bot
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         tag_semver: true
