@@ -15,6 +15,6 @@ func (b *bot) setupMeeting(convid chat1.ConvIDStr, msgid chat1.MessageID, words 
 		b.k.SendMessageByConvID(convid, "I'm sorry, i'm not sure what happened... I was unable to set up a new meeting.\nI've written the appropriate logs and notified my humans.")
 		return
 	}
-	message := fmt.Sprintf("Here's your meeting:\n>URL: %s\n>PIN: %s", meeting.getURL(), meeting.getPIN())
+	message := fmt.Sprintf("Here's your meeting:\n>URL: %s", meeting.getURL())
 	b.k.SendMessageByConvID(convid, message)
 }
