@@ -50,9 +50,11 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 	// if the message is @myusername just perform the default function
 	if strings.HasPrefix(m.Content.Text.Body, fmt.Sprintf("@%s", b.k.Username)) {
 		words := strings.Fields(m.Content.Text.Body)
-		switch words[0] {
-		case "meet":
-			b.setupMeeting(m.ConvID, m.Id, words, m.Channel.MembersType)
+		if len(words) > 1 {
+			switch words[1] {
+			case "meet":
+				b.setupMeeting(m.ConvID, m.Id, words, m.Channel.MembersType)
+			}
 		}
 	}
 	// its a command for me, iterate through extended commands
