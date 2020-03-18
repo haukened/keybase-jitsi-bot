@@ -8,8 +8,9 @@ import (
 	"net/url"
 	"sort"
 	"strconv"
+	"strings"
 
-	"github.com/lithammer/shortuuid/v3"
+	"github.com/sethvargo/go-diceware/diceware"
 )
 
 type phoneNumber struct {
@@ -23,8 +24,13 @@ type jitsiMeeting struct {
 	Phone []phoneNumber
 }
 
-func (j *jitsiMeeting) getJitsiName() {
-	j.Name = shortuuid.New()
+func (j *jitsiMeeting) getJitsiName() error {
+	list, err := diceware.Generate(4)
+	if err != nil {
+		return err
+	}
+	j.Name = strings.Join(list, "-")
+	return nil
 }
 
 func (j *jitsiMeeting) getURL() string {
