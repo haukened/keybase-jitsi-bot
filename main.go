@@ -53,6 +53,7 @@ func newBot() *bot {
 // this handles setting up command advertisements and aliases
 func (b *bot) registerCommands() {
 	opts := keybase.AdvertiseCommandsOptions{
+		Alias: "Jitsi Meet",
 		Advertisements: []chat1.AdvertiseCommandAPIParam{
 			{
 				Typ: "public",
