@@ -1,4 +1,4 @@
-module jitsy-bot
+module jitsi-bot
 
 go 1.13
 
