@@ -53,7 +53,7 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 		if len(words) > 1 {
 			switch words[1] {
 			case "meet":
-				b.setupMeeting(m.ConvID, m.Id, words, m.Channel.MembersType)
+				b.setupMeeting(m.ConvID, m.Sender.Username, words, m.Channel.MembersType)
 			}
 		}
 	}
@@ -66,7 +66,7 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 		// decide if this is askind for extended commands
 		switch thisCommand {
 		case "jitsi":
-			b.setupMeeting(m.ConvID, m.Id, words, m.Channel.MembersType)
+			b.setupMeeting(m.ConvID, m.Sender.Username, words, m.Channel.MembersType)
 		default:
 			return
 		}
