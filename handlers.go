@@ -55,7 +55,7 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 			case "meet":
 				b.setupMeeting(m.ConvID, m.Sender.Username, words, m.Channel.MembersType)
 			case "feedback":
-				b.sendFeedback(m.ConvID, m.Id, m.Sender.Username, m.Content.Text.Body)
+				b.sendFeedback(m.ConvID, m.Id, m.Sender.Username, words)
 			}
 		}
 	}
@@ -71,7 +71,7 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 		case "jitsi":
 			switch maybeSubCommand {
 			case "feedback":
-				b.sendFeedback(m.ConvID, m.Id, m.Sender.Username, m.Content.Text.Body)
+				b.sendFeedback(m.ConvID, m.Id, m.Sender.Username, words)
 			default:
 				b.setupMeeting(m.ConvID, m.Sender.Username, words, m.Channel.MembersType)
 			}
