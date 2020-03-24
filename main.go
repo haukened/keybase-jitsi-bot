@@ -24,8 +24,10 @@ type bot struct {
 // botConfig hold env and cli flags and options
 // fields must be exported for package env (reflect) to work
 type botConfig struct {
-	Debug        bool   `env:"BOT_DEBUG" envDefault:"false"`
-	LogConvIDStr string `env:"BOT_LOG_CONVID" envDefault:""`
+	Debug              bool   `env:"BOT_DEBUG" envDefault:"false"`
+	LogConvIDStr       string `env:"BOT_LOG_CONVID" envDefault:""`
+	FeedbackConvIDStr  string `env:"BOT_FEEDBACK_CONVID" envDefault:""`
+	FeedbackTeamAdvert string `env:"BOT_FEEDBACK_TEAM_ADVERT" envDefault:""`
 }
 
 // hold reply information when needed
@@ -80,6 +82,12 @@ func (b *bot) registerCommands() {
 						Name:        "jitsi",
 						Description: "Starts a meet.jit.si meeting",
 						Usage:       "",
+					},
+					{
+						Name:                "jitsi feedback",
+						Description:         "Tell us how we're doing!",
+						Usage:               "",
+						ExtendedDescription: getFeedbackExtendedDescription(b.config),
 					},
 				},
 			},

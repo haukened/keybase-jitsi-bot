@@ -54,6 +54,8 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 			switch words[1] {
 			case "meet":
 				b.setupMeeting(m.ConvID, m.Sender.Username, words, m.Channel.MembersType)
+			case "feedback":
+				b.sendFeedback(m.ConvID, m.Id, m.Sender.Username, m.Content.Text.Body)
 			}
 		}
 	}
@@ -63,10 +65,16 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 		words := strings.Fields(m.Content.Text.Body)
 		// strip the ! from the first word, and lowercase to derive the command
 		thisCommand := strings.ToLower(strings.Replace(words[0], "!", "", 1))
+		maybeSubCommand := strings.ToLower(words[1])
 		// decide if this is askind for extended commands
 		switch thisCommand {
 		case "jitsi":
-			b.setupMeeting(m.ConvID, m.Sender.Username, words, m.Channel.MembersType)
+			switch maybeSubCommand {
+			case "feedback":
+				b.sendFeedback(m.ConvID, m.Id, m.Sender.Username, m.Content.Text.Body)
+			default:
+				b.setupMeeting(m.ConvID, m.Sender.Username, words, m.Channel.MembersType)
+			}
 		default:
 			return
 		}

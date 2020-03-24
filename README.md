@@ -21,7 +21,9 @@ This package requires the keybase binary installed on your system, and works on 
 #### Running:
 ```
   -debug
-        enables command debugging.
+        enables command debugging to stdout
+  -feedback-convid string
+        sets the keybase chat1.ConvIDStr to send feedback to.
   -log-convid string
         sets the keybase chat1.ConvIDStr to log debugging to keybase chat.
 ```
@@ -45,6 +47,7 @@ Required by keybase: (Must set all of these)
 Required by this package: (Set the values you feel like, if you don't set them they won't be used)
  - `BOT_DEBUG=true`
  - `BOT_LOG_CONVID=<your keybase conversation id>`
+ - `BOT_FEEDBACK_CONVID=<your keybase conversation id>`
 
 #### Example:
 `docker run --name myJitsi --rm -d -e KEYBASE_USERNAME=FOO -e KEYBASE_PAPERKEY="bar baz ..." -e KEYBASE_SERVICE=1 -e BOT_DEBUG=true haukeness/keybase-jitsi-bot`

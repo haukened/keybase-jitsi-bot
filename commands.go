@@ -19,3 +19,19 @@ func (b *bot) setupMeeting(convid chat1.ConvIDStr, sender string, words []string
 	message := fmt.Sprintf("@%s here's your meeting: %s", sender, meeting.getURL())
 	b.k.SendMessageByConvID(convid, message)
 }
+
+func (b *bot) sendFeedback(convid chat1.ConvIDStr, mesgID chat1.MessageID, sender string, message string) {
+	b.debug("feedback recieved in %s", convid)
+	if b.config.FeedbackConvIDStr != "" {
+		fcID := chat1.ConvIDStr(b.config.FeedbackConvIDStr)
+		if _, err := b.k.SendMessageByConvID(fcID, "Feedback from @%s:\n```%s```", sender, message); err != nil {
+			b.k.ReplyByConvID(convid, mesgID, "I'm sorry, I was unable to send your feedback because my benevolent overlords have not set a destination for feedback. :sad:")
+			log.Printf("Unable to send feedback: %s", err)
+		} else {
+			b.k.ReplyByConvID(convid, mesgID, "Thanks! Your feedback has been sent to my human overlords!")
+			b.debug("feedback sent")
+		}
+	} else {
+		b.debug("feedback not enabled. set --feedback-convid or BOT_FEEDBACK_CONVID")
+	}
+}

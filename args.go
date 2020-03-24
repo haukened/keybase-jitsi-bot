@@ -18,6 +18,8 @@ func (b *bot) parseArgs(args []string) error {
 	cliConfig := botConfig{}
 	flags.BoolVar(&cliConfig.Debug, "debug", false, "enables command debugging to stdout")
 	flags.StringVar(&cliConfig.LogConvIDStr, "log-convid", "", "sets the keybase chat1.ConvIDStr to log debugging to keybase chat.")
+	flags.StringVar(&cliConfig.FeedbackConvIDStr, "feedback-convid", "", "sets the keybase chat1.ConvIDStr to send feedback to.")
+	flags.StringVar(&cliConfig.FeedbackTeamAdvert, "feedback-team-advert", "", "sets the keybase team/channel to advertise feedback. @team#channel")
 	if err := flags.Parse(args[1:]); err != nil {
 		return err
 	}
@@ -30,12 +32,21 @@ func (b *bot) parseArgs(args []string) error {
 		if cliConfig.LogConvIDStr != "" {
 			b.config.LogConvIDStr = cliConfig.LogConvIDStr
 		}
+		if cliConfig.FeedbackConvIDStr != "" {
+			b.config.FeedbackConvIDStr = cliConfig.FeedbackConvIDStr
+		}
+		if cliConfig.FeedbackTeamAdvert != "" {
+			b.config.FeedbackTeamAdvert = cliConfig.FeedbackTeamAdvert
+		}
 	}
 
 	// then print the running options
 	b.debug("Debug Enabled")
 	if b.config.LogConvIDStr != "" {
 		b.debug("Logging to conversation %s", b.config.LogConvIDStr)
+	}
+	if b.config.FeedbackConvIDStr != "" {
+		b.debug("Feedback enabled to %s and advertising %s", b.config.FeedbackConvIDStr, b.config.FeedbackTeamAdvert)
 	}
 
 	return nil
