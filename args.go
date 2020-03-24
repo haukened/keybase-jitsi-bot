@@ -17,7 +17,7 @@ func (b *bot) parseArgs(args []string) error {
 	flags := flag.NewFlagSet(args[0], flag.ExitOnError)
 	cliConfig := botConfig{}
 	flags.BoolVar(&cliConfig.Debug, "debug", false, "enables command debugging to stdout")
-	flags.StringVar(&cliConfig.LogConvIDStr, "log-convid", "", "sets the keybase chat1.ConvIDStr to log to for feedback")
+	flags.StringVar(&cliConfig.LogConvIDStr, "log-convid", "", "sets the keybase chat1.ConvIDStr to log debugging to keybase chat.")
 	if err := flags.Parse(args[1:]); err != nil {
 		return err
 	}
