@@ -25,7 +25,7 @@ type bot struct {
 // fields must be exported for package env (reflect) to work
 type botConfig struct {
 	Debug        bool   `env:"BOT_DEBUG" envDefault:"false"`
-	logConvIDStr string `env:"BOT_LOG_CONVID" envDefault:""`
+	LogConvIDStr string `env:"BOT_LOG_CONVID" envDefault:""`
 }
 
 // hold reply information when needed
@@ -38,7 +38,7 @@ type botReply struct {
 func (b *bot) debug(s string, a ...interface{}) {
 	if b.config.Debug {
 		log.Printf(s, a...)
-		if b.config.logConvIDStr != "" {
+		if b.config.LogConvIDStr != "" {
 			b.logToChat(s, a...)
 		}
 	}
@@ -47,9 +47,9 @@ func (b *bot) debug(s string, a ...interface{}) {
 // logToChat will send this message to the keybase chat configured in b.logConv
 func (b *bot) logToChat(s string, a ...interface{}) {
 	// if the ConvIdStr isn't blank try to log
-	if b.config.logConvIDStr != "" {
+	if b.config.LogConvIDStr != "" {
 		// if you can't send the message, log the error to stdout
-		if _, err := b.k.SendMessageByConvID(chat1.ConvIDStr(b.config.logConvIDStr), s, a...); err != nil {
+		if _, err := b.k.SendMessageByConvID(chat1.ConvIDStr(b.config.LogConvIDStr), s, a...); err != nil {
 			log.Printf("Unable to log to keybase chat: %s", err)
 		}
 	} else {
