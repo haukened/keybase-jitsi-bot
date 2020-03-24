@@ -44,6 +44,7 @@ Required by keybase: (Must set all of these)
  
 Required by this package: (Set the values you feel like, if you don't set them they won't be used)
  - `BOT_DEBUG=true`
+ - `BOT_LOG_CONVID=<your keybase conversation id>`
 
 #### Example:
 `docker run --name myJitsi --rm -d -e KEYBASE_USERNAME=FOO -e KEYBASE_PAPERKEY="bar baz ..." -e KEYBASE_SERVICE=1 -e BOT_DEBUG=true haukeness/keybase-jitsi-bot`
