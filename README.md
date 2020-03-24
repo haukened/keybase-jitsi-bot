@@ -21,7 +21,9 @@ This package requires the keybase binary installed on your system, and works on 
 #### Running:
 ```
   -debug
-        enables command debugging
+        enables command debugging.
+  -log-convid string
+        sets the keybase chat1.ConvIDStr to log debugging to keybase chat.
 ```
 
 #### Example: 
