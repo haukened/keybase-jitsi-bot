@@ -37,3 +37,7 @@ func (b *bot) sendFeedback(convid chat1.ConvIDStr, mesgID chat1.MessageID, sende
 		b.debug("feedback not enabled. set --feedback-convid or BOT_FEEDBACK_CONVID")
 	}
 }
+
+func (b *bot) sendWelcome(convid chat1.ConvIDStr) {
+	b.k.SendMessageByConvID(convid, "Hello there!! I'm the Jitsi meeting bot, made by @haukened\nI can start Jitsi meetings right here in this chat!\nI can be activated in 2 ways:\n    1. `@jitsibot meet`\n    2.`!jitsi`\nYou can provide feedback to my humans using:\n    1. `@jitsibot feedback <type anything>`\n    2. `!jitsi feedback <type anything>`\nYou can also join @jitsi_meet to talk about features, enhancements, or talk to live humans! Everyone is welcome!\nI also accept donations to offset hosting costs, just send some XLM to my wallet if you feel like it by typing `+5XLM@jitsibot`")
+}
