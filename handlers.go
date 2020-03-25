@@ -65,7 +65,10 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 		words := strings.Fields(m.Content.Text.Body)
 		// strip the ! from the first word, and lowercase to derive the command
 		thisCommand := strings.ToLower(strings.Replace(words[0], "!", "", 1))
-		maybeSubCommand := strings.ToLower(words[1])
+		maybeSubCommand := ""
+		if len(words) > 1 {
+			maybeSubCommand = strings.ToLower(words[1])
+		}
 		// decide if this is askind for extended commands
 		switch thisCommand {
 		case "jitsi":
