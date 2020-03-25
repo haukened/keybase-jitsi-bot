@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -84,7 +85,7 @@ func (b *bot) registerCommands() {
 						Usage:       "",
 					},
 					{
-						Name:                "jitsi feedback",
+						Name:                fmt.Sprintf("%s feedback", b.k.Username),
 						Description:         "Tell us how we're doing!",
 						Usage:               "",
 						ExtendedDescription: getFeedbackExtendedDescription(b.config),
@@ -105,6 +106,8 @@ func (b *bot) run(args []string) error {
 	}
 
 	b.registerHandlers()
+	// clear the commands and advertise the new commands
+	b.k.ClearCommands()
 	b.registerCommands()
 
 	log.Println("Starting...")

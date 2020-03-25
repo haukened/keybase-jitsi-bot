@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -47,42 +46,37 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 			}
 		}
 	}
-	// if the message is @myusername just perform the default function
-	if strings.HasPrefix(m.Content.Text.Body, fmt.Sprintf("@%s", b.k.Username)) {
+	// Determine first if this is a command
+	if strings.HasPrefix(m.Content.Text.Body, "!") || strings.HasPrefix(m.Content.Text.Body, "@") {
+		// determine the root command
 		words := strings.Fields(m.Content.Text.Body)
-		if len(words) > 1 {
-			switch words[1] {
-			case "meet":
-				b.setupMeeting(m.ConvID, m.Sender.Username, words, m.Channel.MembersType)
-			case "feedback":
-				b.sendFeedback(m.ConvID, m.Id, m.Sender.Username, words)
-			case "hello":
-				fallthrough
-			case "help":
-				b.sendWelcome(m.ConvID)
-			}
-		}
-	}
-	// its a command for me, iterate through extended commands
-	if strings.HasPrefix(m.Content.Text.Body, "!") {
-		// break up the message into words
-		words := strings.Fields(m.Content.Text.Body)
-		// strip the ! from the first word, and lowercase to derive the command
-		thisCommand := strings.ToLower(strings.Replace(words[0], "!", "", 1))
-		maybeSubCommand := ""
-		if len(words) > 1 {
-			maybeSubCommand = strings.ToLower(words[1])
-		}
-		// decide if this is askind for extended commands
-		switch thisCommand {
+		command := strings.Replace(words[0], "@", "", 1)
+		command = strings.Replace(command, "!", "", 1)
+		command = strings.ToLower(command)
+		// create the args
+		args := words[1:]
+		nargs := len(args)
+		switch command {
+		case b.k.Username:
+			fallthrough
 		case "jitsi":
-			switch maybeSubCommand {
-			case "feedback":
-				b.sendFeedback(m.ConvID, m.Id, m.Sender.Username, words)
-			case "help":
-				b.sendWelcome(m.ConvID)
-			default:
-				b.setupMeeting(m.ConvID, m.Sender.Username, words, m.Channel.MembersType)
+			if nargs == 0 {
+				b.setupMeeting(m.ConvID, m.Sender.Username, args, m.Channel.MembersType)
+			} else if nargs >= 1 {
+				// pop the subcommand off the front of the list
+				subcommand, args := args[0], args[1:]
+				switch subcommand {
+				case "meet":
+					b.setupMeeting(m.ConvID, m.Sender.Username, args, m.Channel.MembersType)
+				case "feedback":
+					b.sendFeedback(m.ConvID, m.Id, m.Sender.Username, args)
+				case "hello":
+					fallthrough
+				case "help":
+					b.sendWelcome(m.ConvID)
+				default:
+					return
+				}
 			}
 		default:
 			return
