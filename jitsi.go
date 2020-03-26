@@ -100,6 +100,14 @@ func (j *jitsiMeeting) getJitsiNumbers() error {
 	return nil
 }
 
+// This doesn't query jitsi for phone dial in information
+func newJitsiMeetingSimple() (jitsiMeeting, error) {
+	result := jitsiMeeting{}
+	result.getJitsiName()
+	return result, nil
+}
+
+// call functions are not currently implemented, but are here
 func newJitsiMeeting() (jitsiMeeting, error) {
 	result := jitsiMeeting{}
 	result.getJitsiName()
