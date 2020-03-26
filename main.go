@@ -29,6 +29,7 @@ type botConfig struct {
 	LogConvIDStr       string `env:"BOT_LOG_CONVID" envDefault:""`
 	FeedbackConvIDStr  string `env:"BOT_FEEDBACK_CONVID" envDefault:""`
 	FeedbackTeamAdvert string `env:"BOT_FEEDBACK_TEAM_ADVERT" envDefault:""`
+	KVStoreTeam        string `env:"BOT_KVSTORE_TEAM" envDefault:""`
 }
 
 // hold reply information when needed

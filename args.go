@@ -20,6 +20,7 @@ func (b *bot) parseArgs(args []string) error {
 	flags.StringVar(&cliConfig.LogConvIDStr, "log-convid", "", "sets the keybase chat1.ConvIDStr to log debugging to keybase chat.")
 	flags.StringVar(&cliConfig.FeedbackConvIDStr, "feedback-convid", "", "sets the keybase chat1.ConvIDStr to send feedback to.")
 	flags.StringVar(&cliConfig.FeedbackTeamAdvert, "feedback-team-advert", "", "sets the keybase team/channel to advertise feedback. @team#channel")
+	flags.StringVar(&cliConfig.KVStoreTeam, "kvstore-team", "", "sets the keybase team where kvstore values are stored")
 	if err := flags.Parse(args[1:]); err != nil {
 		return err
 	}
@@ -38,6 +39,9 @@ func (b *bot) parseArgs(args []string) error {
 		if cliConfig.FeedbackTeamAdvert != "" {
 			b.config.FeedbackTeamAdvert = cliConfig.FeedbackTeamAdvert
 		}
+		if cliConfig.KVStoreTeam != "" {
+			b.config.KVStoreTeam = cliConfig.KVStoreTeam
+		}
 	}
 
 	// then print the running options
@@ -47,6 +51,9 @@ func (b *bot) parseArgs(args []string) error {
 	}
 	if b.config.FeedbackConvIDStr != "" {
 		b.debug("Feedback enabled to %s and advertising %s", b.config.FeedbackConvIDStr, b.config.FeedbackTeamAdvert)
+	}
+	if b.config.KVStoreTeam != "" {
+		b.debug("keybase kvstore enabled in @%s", b.config.KVStoreTeam)
 	}
 
 	return nil
