@@ -10,7 +10,7 @@ import (
 
 func (b *bot) setupMeeting(convid chat1.ConvIDStr, sender string, args []string, membersType string) {
 	b.debug("command recieved in conversation %s", convid)
-	meeting, err := newJitsiMeeting()
+	meeting, err := newJitsiMeetingSimple()
 	if err != nil {
 		log.Println(err)
 		message := fmt.Sprintf("@%s - I'm sorry, i'm not sure what happened... I was unable to set up a new meeting.\nI've written the appropriate logs and notified my humans.", sender)
