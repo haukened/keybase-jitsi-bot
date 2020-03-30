@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/teris-io/shortid"
+	"github.com/ugorji/go/codec"
 	"samhofi.us/x/keybase/types/chat1"
 )
 
@@ -26,4 +28,35 @@ func getFeedbackExtendedDescription(bc botConfig) *chat1.UserBotExtendedDescript
 		DesktopBody: "Please note: Your feedback will be public!",
 		MobileBody:  "Please note: Your feedback will be public!",
 	}
+}
+
+func encodeStructToJSONString(v interface{}) (string, error) {
+	jh := codecHandle()
+	var bytes []byte
+	err := codec.NewEncoderBytes(&bytes, jh).Encode(v)
+	if err != nil {
+		return "", err
+	}
+	result := string(bytes)
+	return result, nil
+}
+
+func decodeJSONStringToStruct(v interface{}, src string) error {
+	bytes := []byte(src)
+	jh := codecHandle()
+	return codec.NewDecoderBytes(bytes, jh).Decode(v)
+}
+
+func codecHandle() *codec.JsonHandle {
+	var jh codec.JsonHandle
+	return &jh
+}
+
+func (b *bot) logError(err error) string {
+	// generate the error id
+	eid := shortid.MustGenerate()
+	// send the error to the log
+	b.debug("`%s` - %s", eid, err)
+	// then return the error id for use
+	return eid
 }

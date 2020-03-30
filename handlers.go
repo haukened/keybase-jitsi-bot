@@ -49,7 +49,8 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 	// Determine first if this is a command
 	if strings.HasPrefix(m.Content.Text.Body, "!") || strings.HasPrefix(m.Content.Text.Body, "@") {
 		// determine the root command
-		words := strings.Fields(m.Content.Text.Body)
+		body := strings.ToLower(m.Content.Text.Body)
+		words := strings.Fields(body)
 		command := strings.Replace(words[0], "@", "", 1)
 		command = strings.Replace(command, "!", "", 1)
 		command = strings.ToLower(command)
@@ -58,7 +59,14 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 		nargs := len(args)
 		switch command {
 		case b.k.Username:
-			fallthrough
+			if nargs > 0 {
+				switch args[0] {
+				case "set":
+					b.setKValue(m.ConvID, m.Id, args)
+				case "list":
+					b.listKValue(m.ConvID, m.Id, args)
+				}
+			}
 		case "jitsi":
 			if nargs == 0 {
 				b.setupMeeting(m.ConvID, m.Sender.Username, args, m.Channel.MembersType)

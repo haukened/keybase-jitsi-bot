@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"strings"
 
 	"samhofi.us/x/keybase/types/chat1"
@@ -39,4 +40,57 @@ func (b *bot) sendFeedback(convid chat1.ConvIDStr, mesgID chat1.MessageID, sende
 
 func (b *bot) sendWelcome(convid chat1.ConvIDStr) {
 	b.k.SendMessageByConvID(convid, "Hello there!! I'm the Jitsi meeting bot, made by @haukened\nI can start Jitsi meetings right here in this chat!\nI can be activated in 2 ways:\n    1. `@jitsibot`\n    2.`!jitsi`\nYou can provide feedback to my humans using:\n    1. `@jitsibot feedback <type anything>`\n    2. `!jitsibot feedback <type anything>`\nYou can also join @jitsi_meet to talk about features, enhancements, or talk to live humans! Everyone is welcome!\nI also accept donations to offset hosting costs, just send some XLM to my wallet if you feel like it by typing `+5XLM@jitsibot`\nIf you ever need to see this message again, ask me for help or say hello to me!")
+}
+
+func (b *bot) setKValue(convid chat1.ConvIDStr, msgID chat1.MessageID, args []string) {
+	if args[0] != "set" {
+		return
+	}
+	switch len(args) {
+	case 3:
+		if args[1] == "url" {
+			// first validate the URL
+			u, err := url.ParseRequestURI(args[2])
+			if err != nil {
+				b.k.ReplyByConvID(convid, msgID, "ERROR - `%s`", err)
+				return
+			}
+			// then make sure its HTTPS
+			if u.Scheme != "https" {
+				b.k.ReplyByConvID(convid, msgID, "ERROR - HTTPS Required")
+				return
+			}
+			// then get the current options
+			var opts ConvOptions
+			err = b.KVStoreGetStruct(convid, &opts)
+			if err != nil {
+				eid := b.logError(err)
+				b.k.ReactByConvID(convid, msgID, "Error %s", eid)
+				return
+			}
+			// then update the struct using only the scheme and hostname:port
+			if u.Port() != "" {
+				opts.CustomURL = fmt.Sprintf("%s://%s:%s/", u.Scheme, u.Hostname(), u.Port())
+			} else {
+				opts.CustomURL = fmt.Sprintf("%s://%s/", u.Scheme, u.Hostname())
+			}
+			// then write that back to kvstore, with revision
+			err = b.KVStorePutStruct(convid, opts)
+			if err != nil {
+				eid := b.logError(err)
+				b.k.ReactByConvID(convid, msgID, "ERROR %s", eid)
+				return
+			}
+			b.k.ReactByConvID(convid, msgID, "OK!")
+			return
+		}
+	default:
+		return
+	}
+}
+
+func (b *bot) listKValue(convid chat1.ConvIDStr, msgID chat1.MessageID, args []string) {
+	if args[0] != "list" {
+		return
+	}
 }
