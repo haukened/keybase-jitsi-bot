@@ -3,6 +3,7 @@ package main
 import (
 	"reflect"
 
+	"github.com/ugorji/go/codec"
 	"samhofi.us/x/keybase/types/chat1"
 )
 
@@ -62,4 +63,26 @@ func getTypeName(v interface{}) string {
 		return t.Elem().Name()
 	}
 	return t.Name()
+}
+
+func encodeStructToJSONString(v interface{}) (string, error) {
+	jh := codecHandle()
+	var bytes []byte
+	err := codec.NewEncoderBytes(&bytes, jh).Encode(v)
+	if err != nil {
+		return "", err
+	}
+	result := string(bytes)
+	return result, nil
+}
+
+func decodeJSONStringToStruct(v interface{}, src string) error {
+	bytes := []byte(src)
+	jh := codecHandle()
+	return codec.NewDecoderBytes(bytes, jh).Decode(v)
+}
+
+func codecHandle() *codec.JsonHandle {
+	var jh codec.JsonHandle
+	return &jh
 }
