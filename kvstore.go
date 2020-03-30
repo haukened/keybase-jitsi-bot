@@ -7,7 +7,7 @@ import (
 	"samhofi.us/x/keybase/types/chat1"
 )
 
-// mashals an interface to JSON and sends to kvstore
+// KvStorePutStruct marshals an interface to JSON and sends to kvstore
 func (b *bot) KVStorePutStruct(convIDstr chat1.ConvIDStr, v interface{}) error {
 	// marshal the struct to JSON
 	kvstoreDataString, err := encodeStructToJSONString(v)
@@ -22,6 +22,7 @@ func (b *bot) KVStorePutStruct(convIDstr chat1.ConvIDStr, v interface{}) error {
 	return nil
 }
 
+// KVStoreGetStruct gets a string from kvstore and unmarshals the JSON to a struct
 func (b *bot) KVStoreGetStruct(convIDstr chat1.ConvIDStr, v interface{}) error {
 	// get the string from kvstore
 	result, err := b.KVStoreGet(string(convIDstr), getTypeName(v))
@@ -40,6 +41,7 @@ func (b *bot) KVStoreGetStruct(convIDstr chat1.ConvIDStr, v interface{}) error {
 	return nil
 }
 
+// KVStorePut puts a string into kvstore given a key and namespace
 func (b *bot) KVStorePut(namespace string, key string, value string) error {
 	_, err := b.k.KVPut(&b.config.KVStoreTeam, namespace, key, value)
 	if err != nil {
@@ -48,6 +50,7 @@ func (b *bot) KVStorePut(namespace string, key string, value string) error {
 	return nil
 }
 
+// KVStoreGet gets a string from kvstore given a key and namespace
 func (b *bot) KVStoreGet(namespace string, key string) (string, error) {
 	kvResult, err := b.k.KVGet(&b.config.KVStoreTeam, namespace, key)
 	if err != nil {
