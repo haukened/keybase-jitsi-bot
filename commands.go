@@ -18,6 +18,7 @@ func (b *bot) handlePayment(m chat1.MsgSummary) {
 			if payment.Result.ResultTyp__ == 0 && payment.Result.Error__ == nil {
 				var replyInfo = botReply{convID: m.ConvID, msgID: m.Id}
 				b.payments[*payment.Result.Sent__] = replyInfo
+				b.log("payment recieved %s", payment.PaymentText)
 			} else {
 				// if the payment fails, be sad
 				b.k.ReactByConvID(m.ConvID, m.Id, ":cry:")
