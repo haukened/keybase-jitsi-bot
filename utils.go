@@ -33,7 +33,7 @@ func (b *bot) logError(err error) string {
 	// generate the error id
 	eid := shortid.MustGenerate()
 	// send the error to the log
-	b.debug("`%s` - %s", eid, err)
+	b.log("`%s` - %s", eid, err)
 	// then return the error id for use
 	return eid
 }
