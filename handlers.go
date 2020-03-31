@@ -35,45 +35,42 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 		b.handlePayment(m)
 		return
 	}
-	// Determine first if this is a command
+
+	// if its not a payment evaluate if this is a command at all
 	if strings.HasPrefix(m.Content.Text.Body, "!") || strings.HasPrefix(m.Content.Text.Body, "@") {
-		// determine the root command
-		body := strings.ToLower(m.Content.Text.Body)
-		words := strings.Fields(body)
-		command := strings.Replace(words[0], "@", "", 1)
-		command = strings.Replace(command, "!", "", 1)
-		command = strings.ToLower(command)
-		// create the args
-		args := words[1:]
-		nargs := len(args)
-		switch command {
-		case b.k.Username:
-			if nargs > 0 {
-				switch args[0] {
-				case "set":
-					b.handleSetCommand(m)
-				case "list":
-					b.handleListCommand(m)
-				}
-			}
-		case "jitsi":
-			if nargs == 0 {
-				b.handleMeeting(m)
-			} else if nargs >= 1 {
-				switch args[0] {
-				case "meet":
-					b.handleMeeting(m)
-				case "feedback":
-					b.handleFeedback(m)
-				case "hello":
-					fallthrough
-				case "help":
-					b.handleWelcome(m.ConvID)
-				default:
-					return
-				}
-			}
-		default:
+		// first return if its not a command for me
+		if !strings.Contains(m.Content.Text.Body, b.cmd()) && !strings.Contains(m.Content.Text.Body, b.k.Username) {
+			return
+		}
+		// then check if this is the root command
+		if isRootCommand(m.Content.Text.Body, b.cmd(), b.k.Username) {
+			b.handleMeeting(m)
+			return
+		}
+		// then check sub-command variants
+		// feedback
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "feedback") {
+			b.handleFeedback(m)
+			return
+		}
+		// help
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "help") {
+			b.handleWelcome(m.ConvID)
+			return
+		}
+		// hello
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "hello") {
+			b.handleWelcome(m.ConvID)
+			return
+		}
+		// set commands
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "set") {
+			b.handleSetCommand(m)
+			return
+		}
+		// list commands
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "list") {
+			b.handleSetCommand(m)
 			return
 		}
 	}
