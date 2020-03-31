@@ -53,7 +53,7 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 				case "set":
 					b.handleSetCommand(m)
 				case "list":
-					b.listKValue(m.ConvID, m.Id, args)
+					b.handleListCommand(m)
 				}
 			}
 		case "jitsi":

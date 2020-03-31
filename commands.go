@@ -126,7 +126,9 @@ func (b *bot) handleSetCommand(m chat1.MsgSummary) {
 	}
 }
 
-func (b *bot) listKValue(convid chat1.ConvIDStr, msgID chat1.MessageID, args []string) {
+func (b *bot) handleListCommand(m chat1.MsgSummary) {
+	// first normalize the text and extract the arguments
+	args := strings.Fields(strings.ToLower(m.Content.Text.Body))
 	if args[0] != "list" {
 		return
 	}
