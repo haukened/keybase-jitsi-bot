@@ -26,8 +26,11 @@ func (b *bot) handlePayment(m chat1.MsgSummary) {
 	}
 }
 
+// handleMeeting starts a new jitsi meeting
 func (b *bot) handleMeeting(m chat1.MsgSummary) {
 	b.debug("command recieved in conversation %s", m.ConvID)
+	// currently we aren't sending dial-in information, so don't get it just generate the name
+	// use the simple method
 	meeting, err := newJitsiMeetingSimple()
 	if err != nil {
 		eid := b.logError(err)
@@ -35,10 +38,10 @@ func (b *bot) handleMeeting(m chat1.MsgSummary) {
 		b.k.SendMessageByConvID(m.ConvID, message)
 		return
 	}
-	message := fmt.Sprintf("@%s here's your meeting: %s", m.Sender.Username, meeting.getURL())
-	b.k.SendMessageByConvID(m.ConvID, message)
+	b.k.SendMessageByConvID(m.ConvID, "@%s here's your meeting: %s", m.Sender.Username, meeting.getURL())
 }
 
+// handleFeedback sends feedback to a keybase chat, if configured
 func (b *bot) handleFeedback(m chat1.MsgSummary) {
 	b.log("feedback recieved in %s", m.ConvID)
 	if b.config.FeedbackConvIDStr != "" {
