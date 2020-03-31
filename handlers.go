@@ -68,14 +68,9 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 			b.handleWelcome(m.ConvID)
 			return
 		}
-		// set commands
-		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "set") {
-			b.handleSetCommand(m)
-			return
-		}
-		// list commands
-		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "list") {
-			b.handleSetCommand(m)
+		// config commands
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "config") {
+			b.handleConfigCommand(m)
 			return
 		}
 	}

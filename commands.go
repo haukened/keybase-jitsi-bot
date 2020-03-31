@@ -76,19 +76,38 @@ func (b *bot) handleFeedback(m chat1.MsgSummary) {
 	}
 }
 
-// handleSetCommand processes all settings SET calls
-func (b *bot) handleSetCommand(m chat1.MsgSummary) {
-	b.debug("%s called set command in %s", m.Sender.Username, m.ConvID)
-	// first normalize the text and extract the arguments
+// handleConfigCommand dispatches config calls
+func (b *bot) handleConfigCommand(m chat1.MsgSummary) {
 	args := strings.Fields(strings.ToLower(m.Content.Text.Body))
-	if args[1] != "set" {
+	if args[1] != "config" {
 		return
 	}
+	if len(args) >= 3 {
+		switch args[2] {
+		case "set":
+			b.handleSetCommand(m)
+			return
+		case "list":
+			b.handleListCommand(m)
+			return
+		}
+	}
+}
+
+// handleSetCommand processes all settings SET calls
+// this should be called from b.handleConfigCommand()
+func (b *bot) handleSetCommand(m chat1.MsgSummary) {
+	// first normalize the text and extract the arguments
+	args := strings.Fields(strings.ToLower(m.Content.Text.Body))
+	if args[2] != "set" {
+		return
+	}
+	b.debug("config set called by @%s in %s", m.Sender.Username, m.ConvID)
 	switch len(args) {
-	case 4:
-		if args[2] == "url" {
+	case 5:
+		if args[3] == "url" {
 			// first validate the URL
-			u, err := url.ParseRequestURI(args[3])
+			u, err := url.ParseRequestURI(args[4])
 			if err != nil {
 				eid := b.logError(err)
 				b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
@@ -129,10 +148,12 @@ func (b *bot) handleSetCommand(m chat1.MsgSummary) {
 }
 
 // handleListCommand lists settings for the conversation
+// this should be called from b.handleConfigCommand()
 func (b *bot) handleListCommand(m chat1.MsgSummary) {
 	// first normalize the text and extract the arguments
 	args := strings.Fields(strings.ToLower(m.Content.Text.Body))
-	if args[0] != "list" {
+	if args[2] != "list" {
 		return
 	}
+	b.debug("config list called by @%s in %s", m.Sender.Username, m.ConvID)
 }
