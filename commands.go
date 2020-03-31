@@ -9,6 +9,22 @@ import (
 	"samhofi.us/x/keybase/types/chat1"
 )
 
+func (b *bot) handlePayment(m chat1.MsgSummary) {
+	// there can be multiple payments on each message, iterate them
+	for _, payment := range m.Content.Text.Payments {
+		if strings.Contains(payment.PaymentText, b.k.Username) {
+			// if the payment is successful put log the payment for wallet closure
+			if payment.Result.ResultTyp__ == 0 && payment.Result.Error__ == nil {
+				var replyInfo = botReply{convID: m.ConvID, msgID: m.Id}
+				b.payments[*payment.Result.Sent__] = replyInfo
+			} else {
+				// if the payment fails, be sad
+				b.k.ReactByConvID(m.ConvID, m.Id, ":cry:")
+			}
+		}
+	}
+}
+
 func (b *bot) setupMeeting(convid chat1.ConvIDStr, sender string, args []string, membersType string) {
 	b.debug("command recieved in conversation %s", convid)
 	meeting, err := newJitsiMeetingSimple()
