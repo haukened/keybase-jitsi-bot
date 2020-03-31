@@ -14,6 +14,7 @@ func p(b interface{}) string {
 	return string(s)
 }
 
+// getFeedbackExtendedDescription returns the team name that feedback will be posted to, if configured
 func getFeedbackExtendedDescription(bc botConfig) *chat1.UserBotExtendedDescription {
 	if bc.FeedbackTeamAdvert != "" {
 		return &chat1.UserBotExtendedDescription{
