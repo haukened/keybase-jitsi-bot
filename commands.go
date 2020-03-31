@@ -76,30 +76,33 @@ func (b *bot) handleFeedback(m chat1.MsgSummary) {
 	}
 }
 
-func (b *bot) setKValue(convid chat1.ConvIDStr, msgID chat1.MessageID, args []string) {
-	if args[0] != "set" {
+func (b *bot) handleSetCommand(m chat1.MsgSummary) {
+	// first normalize the text and extract the arguments
+	args := strings.Fields(strings.ToLower(m.Content.Text.Body))
+	if args[1] != "set" {
 		return
 	}
 	switch len(args) {
 	case 3:
-		if args[1] == "url" {
+		if args[2] == "url" {
 			// first validate the URL
 			u, err := url.ParseRequestURI(args[2])
 			if err != nil {
-				b.k.ReplyByConvID(convid, msgID, "ERROR - `%s`", err)
+				eid := b.logError(err)
+				b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
 				return
 			}
 			// then make sure its HTTPS
 			if u.Scheme != "https" {
-				b.k.ReplyByConvID(convid, msgID, "ERROR - HTTPS Required")
+				b.k.ReactByConvID(m.ConvID, m.Id, "ERROR: HTTPS Required")
 				return
 			}
 			// then get the current options
 			var opts ConvOptions
-			err = b.KVStoreGetStruct(convid, &opts)
+			err = b.KVStoreGetStruct(m.ConvID, &opts)
 			if err != nil {
 				eid := b.logError(err)
-				b.k.ReactByConvID(convid, msgID, "Error %s", eid)
+				b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
 				return
 			}
 			// then update the struct using only the scheme and hostname:port
@@ -109,13 +112,13 @@ func (b *bot) setKValue(convid chat1.ConvIDStr, msgID chat1.MessageID, args []st
 				opts.CustomURL = fmt.Sprintf("%s://%s/", u.Scheme, u.Hostname())
 			}
 			// then write that back to kvstore, with revision
-			err = b.KVStorePutStruct(convid, opts)
+			err = b.KVStorePutStruct(m.ConvID, opts)
 			if err != nil {
 				eid := b.logError(err)
-				b.k.ReactByConvID(convid, msgID, "ERROR %s", eid)
+				b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
 				return
 			}
-			b.k.ReactByConvID(convid, msgID, "OK!")
+			b.k.ReactByConvID(m.ConvID, m.Id, "OK!")
 			return
 		}
 	default:

@@ -51,7 +51,7 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 			if nargs > 0 {
 				switch args[0] {
 				case "set":
-					b.setKValue(m.ConvID, m.Id, args)
+					b.handleSetCommand(m)
 				case "list":
 					b.listKValue(m.ConvID, m.Id, args)
 				}
