@@ -68,7 +68,7 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 				case "hello":
 					fallthrough
 				case "help":
-					b.sendWelcome(m.ConvID)
+					b.handleWelcome(m.ConvID)
 				default:
 					return
 				}
@@ -90,7 +90,7 @@ func (b *bot) convHandler(m chat1.ConvSummary) {
 	default:
 		b.debug("New convID found %s, sending welcome message.", m.Id)
 	}
-	b.sendWelcome(m.Id)
+	b.handleWelcome(m.Id)
 }
 
 // this handles wallet events, like when someone send you money in chat
