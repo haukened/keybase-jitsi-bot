@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/teris-io/shortid"
 	"samhofi.us/x/keybase"
 	"samhofi.us/x/keybase/types/chat1"
 	"samhofi.us/x/keybase/types/stellar1"
@@ -29,11 +30,21 @@ type botConfig struct {
 	KVStoreTeam        string `env:"BOT_KVSTORE_TEAM" envDefault:""`
 }
 
-// Debug provides printing only when --debug flag is set or BOT_DEBUG env var is set
+// debug provides printing only when --debug flag is set or BOT_DEBUG env var is set
 func (b *bot) debug(s string, a ...interface{}) {
 	if b.config.Debug {
 		b.log(s, a...)
 	}
+}
+
+// logError generates an error id and returns it for error reporting, and writes the error to logging locations
+func (b *bot) logError(err error) string {
+	// generate the error id
+	eid := shortid.MustGenerate()
+	// send the error to the log
+	b.log("`%s` - %s", eid, err)
+	// then return the error id for use
+	return eid
 }
 
 // logToChat will send this message to the keybase chat configured in b.config.LogConvIDStr

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/teris-io/shortid"
 	"samhofi.us/x/keybase/types/chat1"
 )
 
@@ -28,13 +27,4 @@ func getFeedbackExtendedDescription(bc botConfig) *chat1.UserBotExtendedDescript
 		DesktopBody: "Please note: Your feedback will be public!",
 		MobileBody:  "Please note: Your feedback will be public!",
 	}
-}
-
-func (b *bot) logError(err error) string {
-	// generate the error id
-	eid := shortid.MustGenerate()
-	// send the error to the log
-	b.log("`%s` - %s", eid, err)
-	// then return the error id for use
-	return eid
 }
