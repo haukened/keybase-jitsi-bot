@@ -8,6 +8,22 @@ import (
 	"samhofi.us/x/keybase/types/chat1"
 )
 
+/*
+**** this function is a special case on parameters as it must be called from 2 handlers which
+**** get their information from separate types.  As a result we're only passing the conversation id.
+**** because of this we can't wrap handleWelcome with permissions, not that you'd want to.
+ */
+
+// handleWelcome sends the welcome message to new conversations
+func (b *bot) handleWelcome(id chat1.ConvIDStr) {
+	b.k.SendMessageByConvID(id, "Hello there!! I'm the Jitsi meeting bot, made by @haukened\nI can start Jitsi meetings right here in this chat!\nI can be activated in 2 ways:\n    1. `@jitsibot`\n    2.`!jitsi`\nYou can provide feedback to my humans using:\n    1. `@jitsibot feedback <type anything>`\n    2. `!jitsibot feedback <type anything>`\nYou can also join @jitsi_meet to talk about features, enhancements, or talk to live humans! Everyone is welcome!\nI also accept donations to offset hosting costs, just send some XLM to my wallet if you feel like it by typing `+5XLM@jitsibot`\nIf you ever need to see this message again, ask me for help or say hello to me!")
+}
+
+/*
+**** all other commands here-below should only accept a single argument of type chat1.MsgSummary
+**** in order to be compliant with the permissions wrapper.  Anything not should be explicitly notated.
+ */
+
 // handlePayment controls how the bot reacts to wallet payments in chat
 func (b *bot) handlePayment(m chat1.MsgSummary) {
 	// there can be multiple payments on each message, iterate them
@@ -58,16 +74,6 @@ func (b *bot) handleFeedback(m chat1.MsgSummary) {
 		b.k.ReplyByConvID(m.ConvID, m.Id, "I'm sorry, I was unable to send your feedback because my benevolent overlords have not set a destination for feedback. :sob:")
 		b.log("user tried to send feedback, but feedback is not enabled. set --feedback-convid or BOT_FEEDBACK_CONVID")
 	}
-}
-
-/*
-**** this function is a special case on parameters as it must be called from 2 handlers which
-**** get their information from separate types.  As a result we're only passing the conversation id.
-**** because of this we can't wrap handleWelcome with permissions, not that you'd want to.
- */
-// handleWelcome sends the welcome message to new conversations
-func (b *bot) handleWelcome(id chat1.ConvIDStr) {
-	b.k.SendMessageByConvID(id, "Hello there!! I'm the Jitsi meeting bot, made by @haukened\nI can start Jitsi meetings right here in this chat!\nI can be activated in 2 ways:\n    1. `@jitsibot`\n    2.`!jitsi`\nYou can provide feedback to my humans using:\n    1. `@jitsibot feedback <type anything>`\n    2. `!jitsibot feedback <type anything>`\nYou can also join @jitsi_meet to talk about features, enhancements, or talk to live humans! Everyone is welcome!\nI also accept donations to offset hosting costs, just send some XLM to my wallet if you feel like it by typing `+5XLM@jitsibot`\nIf you ever need to see this message again, ask me for help or say hello to me!")
 }
 
 func (b *bot) setKValue(convid chat1.ConvIDStr, msgID chat1.MessageID, args []string) {
