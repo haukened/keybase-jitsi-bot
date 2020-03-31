@@ -9,6 +9,7 @@ import (
 	"samhofi.us/x/keybase/types/chat1"
 )
 
+// handlePayment controls how the bot reacts to wallet payments in chat
 func (b *bot) handlePayment(m chat1.MsgSummary) {
 	// there can be multiple payments on each message, iterate them
 	for _, payment := range m.Content.Text.Payments {
