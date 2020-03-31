@@ -10,9 +10,6 @@ import (
 	"samhofi.us/x/keybase/types/stellar1"
 )
 
-// this global controls debug printing
-var debug bool
-
 // Bot holds the necessary information for the bot to work.
 type bot struct {
 	k        *keybase.Keybase
