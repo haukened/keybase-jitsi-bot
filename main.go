@@ -29,6 +29,7 @@ type botConfig struct {
 	LogConvIDStr       string `env:"BOT_LOG_CONVID" envDefault:""`
 	FeedbackConvIDStr  string `env:"BOT_FEEDBACK_CONVID" envDefault:""`
 	FeedbackTeamAdvert string `env:"BOT_FEEDBACK_TEAM_ADVERT" envDefault:""`
+	KVStoreTeam        string `env:"BOT_KVSTORE_TEAM" envDefault:""`
 }
 
 // hold reply information when needed
@@ -110,6 +111,22 @@ func (b *bot) run(args []string) error {
 	b.k.ClearCommands()
 	b.registerCommands()
 
+	// this is just for testing, and doesn't work yet
+	if err := b.KVStorePutStruct("test", &ConvOptions{ConvID: "test", CustomURL: "https://te.st:888"}); err != nil {
+		log.Printf("KV: %+v", err)
+	}
+	var vRes1 ConvOptions
+	if err := b.KVStoreGetStruct("test", &vRes1); err != nil {
+		log.Printf("KV: %+v", err)
+	} else {
+		fmt.Printf("VR: %+v\n", vRes1)
+	}
+	var vRes2 ConvOptions
+	if err := b.KVStoreGetStruct("test1", &vRes2); err != nil {
+		log.Printf("KV: %+v", err)
+	} else {
+		fmt.Printf("VR: %+v\n", vRes2)
+	}
 	log.Println("Starting...")
 	b.k.Run(b.handlers, &b.opts)
 	return nil
