@@ -76,6 +76,7 @@ func (b *bot) handleFeedback(m chat1.MsgSummary) {
 	}
 }
 
+// handleSetCommand processes all settings SET calls
 func (b *bot) handleSetCommand(m chat1.MsgSummary) {
 	// first normalize the text and extract the arguments
 	args := strings.Fields(strings.ToLower(m.Content.Text.Body))
@@ -126,6 +127,7 @@ func (b *bot) handleSetCommand(m chat1.MsgSummary) {
 	}
 }
 
+// handleListCommand lists settings for the conversation
 func (b *bot) handleListCommand(m chat1.MsgSummary) {
 	// first normalize the text and extract the arguments
 	args := strings.Fields(strings.ToLower(m.Content.Text.Body))
