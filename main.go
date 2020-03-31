@@ -20,6 +20,11 @@ type bot struct {
 	config   botConfig
 }
 
+// this allows you to change the command the bot listens to (in additon to its username)
+func (b *bot) cmd() string {
+	return "jitsi"
+}
+
 // botConfig hold env and cli flags and options
 // fields must be exported for package env (reflect) to work
 type botConfig struct {
