@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 	"strings"
 
@@ -40,19 +39,21 @@ func (b *bot) handleMeeting(m chat1.MsgSummary) {
 	b.k.SendMessageByConvID(m.ConvID, message)
 }
 
-func (b *bot) sendFeedback(convid chat1.ConvIDStr, mesgID chat1.MessageID, sender string, args []string) {
-	b.debug("feedback recieved in %s", convid)
+func (b *bot) handleFeedback(m chat1.MsgSummary) {
+	b.log("feedback recieved in %s", m.ConvID)
 	if b.config.FeedbackConvIDStr != "" {
-		feedback := strings.Join(args, " ")
+		args := strings.Fields(m.Content.Text.Body)
+		feedback := strings.Join(args[2:], " ")
 		fcID := chat1.ConvIDStr(b.config.FeedbackConvIDStr)
-		if _, err := b.k.SendMessageByConvID(fcID, "Feedback from @%s:\n```%s```", sender, feedback); err != nil {
-			b.k.ReplyByConvID(convid, mesgID, "I'm sorry, I was unable to send your feedback because my benevolent overlords have not set a destination for feedback. :sad:")
-			log.Printf("Unable to send feedback: %s", err)
+		if _, err := b.k.SendMessageByConvID(fcID, "Feedback from @%s:\n```%s```", m.Sender.Username, feedback); err != nil {
+			eid := b.logError(err)
+			b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
 		} else {
-			b.k.ReplyByConvID(convid, mesgID, "Thanks! Your feedback has been sent to my human overlords!")
+			b.k.ReplyByConvID(m.ConvID, m.Id, "Thanks! Your feedback has been sent to my human overlords!")
 		}
 	} else {
-		b.debug("feedback not enabled. set --feedback-convid or BOT_FEEDBACK_CONVID")
+		b.k.ReplyByConvID(m.ConvID, m.Id, "I'm sorry, I was unable to send your feedback because my benevolent overlords have not set a destination for feedback. :sob:")
+		b.log("user tried to send feedback, but feedback is not enabled. set --feedback-convid or BOT_FEEDBACK_CONVID")
 	}
 }
 

@@ -60,13 +60,11 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 			if nargs == 0 {
 				b.handleMeeting(m)
 			} else if nargs >= 1 {
-				// pop the subcommand off the front of the list
-				subcommand, args := args[0], args[1:]
-				switch subcommand {
+				switch args[0] {
 				case "meet":
 					b.handleMeeting(m)
 				case "feedback":
-					b.sendFeedback(m.ConvID, m.Id, m.Sender.Username, args)
+					b.handleFeedback(m)
 				case "hello":
 					fallthrough
 				case "help":
