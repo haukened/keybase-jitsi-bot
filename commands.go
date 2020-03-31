@@ -27,17 +27,17 @@ func (b *bot) handlePayment(m chat1.MsgSummary) {
 	}
 }
 
-func (b *bot) setupMeeting(convid chat1.ConvIDStr, sender string, args []string, membersType string) {
-	b.debug("command recieved in conversation %s", convid)
+func (b *bot) handleMeeting(m chat1.MsgSummary) {
+	b.debug("command recieved in conversation %s", m.ConvID)
 	meeting, err := newJitsiMeetingSimple()
 	if err != nil {
-		log.Println(err)
-		message := fmt.Sprintf("@%s - I'm sorry, i'm not sure what happened... I was unable to set up a new meeting.\nI've written the appropriate logs and notified my humans.", sender)
-		b.k.SendMessageByConvID(convid, message)
+		eid := b.logError(err)
+		message := fmt.Sprintf("@%s - I'm sorry, i'm not sure what happened... I was unable to set up a new meeting.\nI've written the appropriate logs and notified my humans. Please reference Error ID %s", m.Sender.Username, eid)
+		b.k.SendMessageByConvID(m.ConvID, message)
 		return
 	}
-	message := fmt.Sprintf("@%s here's your meeting: %s", sender, meeting.getURL())
-	b.k.SendMessageByConvID(convid, message)
+	message := fmt.Sprintf("@%s here's your meeting: %s", m.Sender.Username, meeting.getURL())
+	b.k.SendMessageByConvID(m.ConvID, message)
 }
 
 func (b *bot) sendFeedback(convid chat1.ConvIDStr, mesgID chat1.MessageID, sender string, args []string) {
