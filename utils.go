@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
-	"github.com/teris-io/shortid"
 	"samhofi.us/x/keybase/types/chat1"
 )
 
@@ -14,6 +14,7 @@ func p(b interface{}) string {
 	return string(s)
 }
 
+// getFeedbackExtendedDescription returns the team name that feedback will be posted to, if configured
 func getFeedbackExtendedDescription(bc botConfig) *chat1.UserBotExtendedDescription {
 	if bc.FeedbackTeamAdvert != "" {
 		return &chat1.UserBotExtendedDescription{
@@ -29,11 +30,31 @@ func getFeedbackExtendedDescription(bc botConfig) *chat1.UserBotExtendedDescript
 	}
 }
 
-func (b *bot) logError(err error) string {
-	// generate the error id
-	eid := shortid.MustGenerate()
-	// send the error to the log
-	b.debug("`%s` - %s", eid, err)
-	// then return the error id for use
-	return eid
+// hasCommandPrefix determines if the command matches either command or name variant
+func hasCommandPrefix(s string, baseCommand string, botName string, subCommands string) bool {
+	// if this is actually a command
+	if strings.HasPrefix(s, "!") || strings.HasPrefix(s, "@") {
+		// generate the two possible command variants
+		botCommand := fmt.Sprintf("%s %s", baseCommand, subCommands)
+		nameCommand := fmt.Sprintf("%s %s", botName, subCommands)
+		// then remove the ! or @ from the string
+		s = strings.Replace(s, "!", "", 1)
+		s = strings.Replace(s, "@", "", 1)
+		// then check if either command variant is a match to the subCommands sent
+		if strings.HasPrefix(s, botCommand) || strings.HasPrefix(s, nameCommand) {
+			return true
+		}
+	}
+	return false
+}
+
+// isRootCommand determines if the command is the root command or name with no arguments
+func isRootCommand(s string, baseCommand string, botName string) bool {
+	// the space after is important because keybase autocompletes ! and @ with a space after
+	botCommand := fmt.Sprintf("!%s ", baseCommand)
+	nameCommand := fmt.Sprintf("@%s ", botName)
+	if s == botCommand || s == nameCommand {
+		return true
+	}
+	return false
 }
