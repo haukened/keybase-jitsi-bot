@@ -85,18 +85,20 @@ func (b *bot) handleConfigCommand(m chat1.MsgSummary) {
 	if len(args) >= 3 {
 		switch args[2] {
 		case "set":
-			b.handleSetCommand(m)
+			b.handleConfigSet(m)
 			return
 		case "list":
-			b.handleListCommand(m)
+			b.handleConfigList(m)
 			return
+		case "help":
+			b.handleConfigHelp(m)
 		}
 	}
 }
 
-// handleSetCommand processes all settings SET calls
+// handleConfigSet processes all settings SET calls
 // this should be called from b.handleConfigCommand()
-func (b *bot) handleSetCommand(m chat1.MsgSummary) {
+func (b *bot) handleConfigSet(m chat1.MsgSummary) {
 	// first normalize the text and extract the arguments
 	args := strings.Fields(strings.ToLower(m.Content.Text.Body))
 	if args[2] != "set" {
@@ -147,12 +149,23 @@ func (b *bot) handleSetCommand(m chat1.MsgSummary) {
 	}
 }
 
-// handleListCommand lists settings for the conversation
+// handleConfigList lists settings for the conversation
 // this should be called from b.handleConfigCommand()
-func (b *bot) handleListCommand(m chat1.MsgSummary) {
+func (b *bot) handleConfigList(m chat1.MsgSummary) {
 	// first normalize the text and extract the arguments
 	args := strings.Fields(strings.ToLower(m.Content.Text.Body))
 	if args[2] != "list" {
+		return
+	}
+	b.debug("config list called by @%s in %s", m.Sender.Username, m.ConvID)
+}
+
+// handleConfigHelp shows config help
+// this should be called from b.handleConfigCommand()
+func (b *bot) handleConfigHelp(m chat1.MsgSummary) {
+	// first normalize the text and extract the arguments
+	args := strings.Fields(strings.ToLower(m.Content.Text.Body))
+	if args[2] != "help" {
 		return
 	}
 	b.debug("config list called by @%s in %s", m.Sender.Username, m.ConvID)
