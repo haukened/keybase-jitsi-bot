@@ -48,6 +48,11 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 			return
 		}
 		// then check sub-command variants
+		// meet
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "meet") {
+			b.handleMeeting(m)
+			return
+		}
 		// feedback
 		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "feedback") {
 			b.handleFeedback(m)
