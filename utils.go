@@ -50,8 +50,9 @@ func hasCommandPrefix(s string, baseCommand string, botName string, subCommands 
 
 // isRootCommand determines if the command is the root command or name with no arguments
 func isRootCommand(s string, baseCommand string, botName string) bool {
-	botCommand := fmt.Sprintf("!%s", baseCommand)
-	nameCommand := fmt.Sprintf("@%s", botName)
+	// the space after is important because keybase autocompletes ! and @ with a space after
+	botCommand := fmt.Sprintf("!%s ", baseCommand)
+	nameCommand := fmt.Sprintf("@%s ", botName)
 	if s == botCommand || s == nameCommand {
 		return true
 	}
