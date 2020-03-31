@@ -78,16 +78,17 @@ func (b *bot) handleFeedback(m chat1.MsgSummary) {
 
 // handleSetCommand processes all settings SET calls
 func (b *bot) handleSetCommand(m chat1.MsgSummary) {
+	b.debug("%s called set command in %s", m.Sender.Username, m.ConvID)
 	// first normalize the text and extract the arguments
 	args := strings.Fields(strings.ToLower(m.Content.Text.Body))
 	if args[1] != "set" {
 		return
 	}
 	switch len(args) {
-	case 3:
+	case 4:
 		if args[2] == "url" {
 			// first validate the URL
-			u, err := url.ParseRequestURI(args[2])
+			u, err := url.ParseRequestURI(args[3])
 			if err != nil {
 				eid := b.logError(err)
 				b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
