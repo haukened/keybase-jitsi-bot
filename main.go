@@ -32,12 +32,6 @@ type botConfig struct {
 	KVStoreTeam        string `env:"BOT_KVSTORE_TEAM" envDefault:""`
 }
 
-// hold reply information when needed
-type botReply struct {
-	convID chat1.ConvIDStr
-	msgID  chat1.MessageID
-}
-
 // Debug provides printing only when --debug flag is set or BOT_DEBUG env var is set
 func (b *bot) debug(s string, a ...interface{}) {
 	if b.config.Debug {
