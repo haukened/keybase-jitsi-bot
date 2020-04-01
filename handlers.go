@@ -44,20 +44,11 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 		}
 		// then check if this is the root command
 		if isRootCommand(m.Content.Text.Body, b.cmd(), b.k.Username) {
-			b.handleMeeting(m)
+			b.checkPermissionAndExecute("reader", m, b.handleMeeting)
 			return
 		}
-		// then check sub-command variants
-		// meet
-		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "meet") {
-			b.handleMeeting(m)
-			return
-		}
-		// feedback
-		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "feedback") {
-			b.handleFeedback(m)
-			return
-		}
+
+		// then check help and welcome (non-permissions)
 		// help
 		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "help") {
 			b.handleWelcome(m.ConvID)
@@ -68,9 +59,21 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 			b.handleWelcome(m.ConvID)
 			return
 		}
+
+		// then check sub-command variants (permissions)
+		// meet
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "meet") {
+			b.checkPermissionAndExecute("reader", m, b.handleMeeting)
+			return
+		}
+		// feedback
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "feedback") {
+			b.checkPermissionAndExecute("reader", m, b.handleFeedback)
+			return
+		}
 		// config commands
 		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "config") {
-			b.handleConfigCommand(m)
+			b.checkPermissionAndExecute("admin", m, b.handleConfigCommand)
 			return
 		}
 	}
