@@ -45,6 +45,16 @@ func (b *bot) handlePayment(m chat1.MsgSummary) {
 // handleMeeting starts a new jitsi meeting
 func (b *bot) handleMeeting(m chat1.MsgSummary) {
 	b.debug("command recieved in conversation %s", m.ConvID)
+	// check and see if this conversation has a custom URL
+	opts := ConvOptions{}
+	err := b.KVStoreGetStruct(m.ConvID, &opts)
+	if err != nil {
+		b.debug("unable to get conversation options")
+		eid := b.logError(err)
+		b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
+		return
+	}
+	b.debug("%+v", opts)
 	// currently we aren't sending dial-in information, so don't get it just generate the name
 	// use the simple method
 	meeting, err := newJitsiMeetingSimple()
@@ -53,6 +63,10 @@ func (b *bot) handleMeeting(m chat1.MsgSummary) {
 		message := fmt.Sprintf("@%s - I'm sorry, i'm not sure what happened... I was unable to set up a new meeting.\nI've written the appropriate logs and notified my humans. Please reference Error ID %s", m.Sender.Username, eid)
 		b.k.SendMessageByConvID(m.ConvID, message)
 		return
+	}
+	// then set the Custom server URL, if it exists
+	if opts.ConvID == string(m.ConvID) && opts.CustomURL != "" {
+		meeting.CustomServer = opts.CustomURL
 	}
 	b.k.SendMessageByConvID(m.ConvID, "@%s here's your meeting: %s", m.Sender.Username, meeting.getURL())
 }
@@ -130,9 +144,13 @@ func (b *bot) handleConfigSet(m chat1.MsgSummary) {
 			}
 			// then update the struct using only the scheme and hostname:port
 			if u.Port() != "" {
-				opts.CustomURL = fmt.Sprintf("%s://%s:%s/", u.Scheme, u.Hostname(), u.Port())
+				opts.CustomURL = fmt.Sprintf("%s://%s:%s", u.Scheme, u.Hostname(), u.Port())
 			} else {
-				opts.CustomURL = fmt.Sprintf("%s://%s/", u.Scheme, u.Hostname())
+				opts.CustomURL = fmt.Sprintf("%s://%s", u.Scheme, u.Hostname())
+			}
+			// ensure that the struct has convid filled out (if its new it won't)
+			if opts.ConvID == "" {
+				opts.ConvID = string(m.ConvID)
 			}
 			// then write that back to kvstore, with revision
 			err = b.KVStorePutStruct(m.ConvID, opts)
