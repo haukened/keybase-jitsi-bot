@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/url"
 	"strings"
+	"text/tabwriter"
 
 	"samhofi.us/x/keybase/types/chat1"
 )
@@ -175,7 +177,26 @@ func (b *bot) handleConfigList(m chat1.MsgSummary) {
 	if args[2] != "list" {
 		return
 	}
-	b.debug("config list called by @%s in %s", m.Sender.Username, m.ConvID)
+	// get the ConvOptions
+	var opts ConvOptions
+	err := b.KVStoreGetStruct(m.ConvID, &opts)
+	if err != nil {
+		eid := b.logError(err)
+		b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
+		return
+	}
+	// then reflect the struct to a list
+	configOpts := structToSlice(opts)
+	// Then iterate those through a tabWriter
+	var buf bytes.Buffer
+	w := tabwriter.NewWriter(&buf, 0, 0, 3, ' ', 0)
+	fmt.Fprintln(w, "Config Options for this channel:\n```")
+	for _, opt := range configOpts {
+		fmt.Fprintf(w, "%s\t%v\t\n", opt.Name, opt.Value)
+	}
+	fmt.Fprintln(w, "```")
+	w.Flush()
+	b.k.ReplyByConvID(m.ConvID, m.Id, buf.String())
 }
 
 // handleConfigHelp shows config help
