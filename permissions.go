@@ -10,24 +10,40 @@ import (
 func (b *bot) checkPermissionAndExecute(requiredRole string, m chat1.MsgSummary, f func(chat1.MsgSummary)) {
 	// get the members of the conversation
 	b.debug("Executing permissions check")
-	// currently this doesn't work due to a keybase bug
+	// currently this doesn't work due to a keybase bug unless you're in the role of resticted bot
 	// the workaround is to check the general channel the old way
-	//conversation, err := b.k.ListMembersOfConversation(m.ConvID)
-
-	// **** <workaround>
-	channel := chat1.ChatChannel{
-		Name:        m.Channel.Name,
-		MembersType: m.Channel.MembersType,
-		TopicName:   "general",
-	}
-	conversation, err := b.k.ListMembersOfChannel(channel)
-	/// **** </workaround>
-
+	// so first check the new way
+	conversation, err := b.k.ListMembersOfConversation(m.ConvID)
 	if err != nil {
 		eid := b.logError(err)
 		b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
 		return
 	}
+	// **** <workaround>
+	// check if the length of the lists are zero
+	// it'll look like this:
+	// {"owners":[],"admins":[],"writers":[],"readers":[],"bots":[],"restrictedBots":[]}
+	if len(conversation.Members.Owners) == 0 &&
+		len(conversation.Members.Admins) == 0 &&
+		len(conversation.Members.Writers) == 0 &&
+		len(conversation.Members.Readers) == 0 &&
+		len(conversation.Members.Bots) == 0 &&
+		len(conversation.Members.RestrictedBots) == 0 {
+		channel := chat1.ChatChannel{
+			Name:        m.Channel.Name,
+			MembersType: m.Channel.MembersType,
+			TopicName:   "general",
+		}
+		// re-map the members using the workaround, in case you're not in the restricted bot role
+		conversation, err = b.k.ListMembersOfChannel(channel)
+		if err != nil {
+			eid := b.logError(err)
+			b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
+			return
+		}
+	}
+	/// **** </workaround>
+
 	// create a map of valid roles, according to @dxb struc
 	memberTypes := make(map[string]struct{})
 	memberTypes["owner"] = struct{}{}
