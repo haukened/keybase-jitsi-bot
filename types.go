@@ -14,3 +14,9 @@ type ConvOptions struct {
 	//NotificationsEnabled bool   `json:"notifications_enabled,omitempty"`
 	CustomURL string `json:"custom_url,omitempty"`
 }
+
+// reflectStruct holds information about reflected structs!
+type reflectStruct struct {
+	Name  string
+	Value interface{}
+}
