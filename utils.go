@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"samhofi.us/x/keybase/types/chat1"
@@ -57,4 +58,15 @@ func isRootCommand(s string, baseCommand string, botName string) bool {
 		return true
 	}
 	return false
+}
+
+// this converts structs to slices of (Name, Value) pairs
+func structToSlice(v interface{}) []reflectStruct {
+	x := reflect.ValueOf(v)
+	values := make([]reflectStruct, x.NumField())
+	for i := 0; i < x.NumField(); i++ {
+		values[i].Value = x.Field(i).Interface()
+		values[i].Name = x.Type().Field(i).Name
+	}
+	return values
 }
