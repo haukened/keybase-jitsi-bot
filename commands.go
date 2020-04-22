@@ -122,7 +122,7 @@ func (b *bot) handleConfigSet(m chat1.MsgSummary) {
 	b.debug("config set called by @%s in %s", m.Sender.Username, m.ConvID)
 	switch len(args) {
 	case 5:
-		if args[3] == "url" {
+		if args[3] == "customurl" {
 			// first validate the URL
 			u, err := url.ParseRequestURI(args[4])
 			if err != nil {
