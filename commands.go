@@ -207,5 +207,5 @@ func (b *bot) handleConfigHelp(m chat1.MsgSummary) {
 	if args[2] != "help" {
 		return
 	}
-	b.debug("config list called by @%s in %s", m.Sender.Username, m.ConvID)
+	b.debug("config help called by @%s in %s", m.Sender.Username, m.ConvID)
 }
