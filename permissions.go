@@ -9,40 +9,12 @@ import (
 // checkPermissionAndExecute will check the minimum required role for the permission and execute the handler function if allowed
 func (b *bot) checkPermissionAndExecute(requiredRole string, m chat1.MsgSummary, f func(chat1.MsgSummary)) {
 	// get the members of the conversation
-	b.debug("Executing permissions check")
-	// currently this doesn't work due to a keybase bug unless you're in the role of resticted bot
-	// the workaround is to check the general channel the old way
-	// so first check the new way
 	members, err := b.k.ListMembersOfConversation(m.ConvID)
 	if err != nil {
 		eid := b.logError(err)
 		b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
 		return
 	}
-	// **** <workaround>
-	// check if the length of the lists are zero
-	// it'll look like this:
-	// {"owners":[],"admins":[],"writers":[],"readers":[],"bots":[],"restrictedBots":[]}
-	if len(members.Owners) == 0 &&
-		len(members.Admins) == 0 &&
-		len(members.Writers) == 0 &&
-		len(members.Readers) == 0 &&
-		len(members.Bots) == 0 &&
-		len(members.RestrictedBots) == 0 {
-		channel := chat1.ChatChannel{
-			Name:        m.Channel.Name,
-			MembersType: m.Channel.MembersType,
-			TopicName:   "general",
-		}
-		// re-map the members using the workaround, in case you're not in the restricted bot role
-		members, err = b.k.ListMembersOfChannel(channel)
-		if err != nil {
-			eid := b.logError(err)
-			b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
-			return
-		}
-	}
-	/// **** </workaround>
 
 	// create a map of valid roles, according to @dxb struc
 	memberTypes := make(map[string]struct{})
@@ -64,7 +36,6 @@ func (b *bot) checkPermissionAndExecute(requiredRole string, m chat1.MsgSummary,
 			f(m)
 			return
 		}
-		b.debug("no")
 	}
 	// if the required role was owner, return and don't evaluate the rest
 	if strings.ToLower(requiredRole) == "owner" {
