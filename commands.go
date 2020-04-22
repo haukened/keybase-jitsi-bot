@@ -191,6 +191,10 @@ func (b *bot) handleConfigList(m chat1.MsgSummary) {
 	w := tabwriter.NewWriter(&buf, 0, 0, 3, ' ', 0)
 	fmt.Fprintln(w, "Config Options for this channel:\n```")
 	for _, opt := range configOpts {
+		if opt.Name == "ConvID" {
+			// dont print out the conversation id, thats not an option.
+			continue
+		}
 		fmt.Fprintf(w, "%s\t%v\t\n", opt.Name, opt.Value)
 	}
 	fmt.Fprintln(w, "```")
