@@ -56,7 +56,6 @@ func (b *bot) handleMeeting(m chat1.MsgSummary) {
 		b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
 		return
 	}
-	b.debug("%+v", opts)
 	// currently we aren't sending dial-in information, so don't get it just generate the name
 	// use the simple method
 	meeting, err := newJitsiMeetingSimple()
