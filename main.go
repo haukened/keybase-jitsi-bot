@@ -5,13 +5,11 @@ import (
 	"log"
 	"os"
 
+	"github.com/teris-io/shortid"
 	"samhofi.us/x/keybase"
 	"samhofi.us/x/keybase/types/chat1"
 	"samhofi.us/x/keybase/types/stellar1"
 )
-
-// this global controls debug printing
-var debug bool
 
 // Bot holds the necessary information for the bot to work.
 type bot struct {
@@ -22,6 +20,11 @@ type bot struct {
 	config   botConfig
 }
 
+// this allows you to change the command the bot listens to (in additon to its username)
+func (b *bot) cmd() string {
+	return "jitsi"
+}
+
 // botConfig hold env and cli flags and options
 // fields must be exported for package env (reflect) to work
 type botConfig struct {
@@ -29,36 +32,37 @@ type botConfig struct {
 	LogConvIDStr       string `env:"BOT_LOG_CONVID" envDefault:""`
 	FeedbackConvIDStr  string `env:"BOT_FEEDBACK_CONVID" envDefault:""`
 	FeedbackTeamAdvert string `env:"BOT_FEEDBACK_TEAM_ADVERT" envDefault:""`
+	KVStoreTeam        string `env:"BOT_KVSTORE_TEAM" envDefault:""`
 }
 
-// hold reply information when needed
-type botReply struct {
-	convID chat1.ConvIDStr
-	msgID  chat1.MessageID
-}
-
-// Debug provides printing only when --debug flag is set or BOT_DEBUG env var is set
+// debug provides printing only when --debug flag is set or BOT_DEBUG env var is set
 func (b *bot) debug(s string, a ...interface{}) {
 	if b.config.Debug {
-		log.Printf(s, a...)
-		if b.config.LogConvIDStr != "" {
-			b.logToChat(s, a...)
-		}
+		b.log(s, a...)
 	}
 }
 
-// logToChat will send this message to the keybase chat configured in b.logConv
-func (b *bot) logToChat(s string, a ...interface{}) {
-	// if the ConvIdStr isn't blank try to log
+// logError generates an error id and returns it for error reporting, and writes the error to logging locations
+func (b *bot) logError(err error) string {
+	// generate the error id
+	eid := shortid.MustGenerate()
+	// send the error to the log
+	b.log("`%s` - %s", eid, err)
+	// then return the error id for use
+	return eid
+}
+
+// logToChat will send this message to the keybase chat configured in b.config.LogConvIDStr
+func (b *bot) log(s string, a ...interface{}) {
+	// if the ConvIdStr isn't blank try to log to chat
 	if b.config.LogConvIDStr != "" {
 		// if you can't send the message, log the error to stdout
 		if _, err := b.k.SendMessageByConvID(chat1.ConvIDStr(b.config.LogConvIDStr), s, a...); err != nil {
 			log.Printf("Unable to log to keybase chat: %s", err)
 		}
-	} else {
-		// otherwise (and you shouldn't be here but....) log it to stdout
-		log.Println("Unable to log to keybase chat, logging ConvIDStr is not set")
 	}
+	// and then log it to stdout
+	log.Printf(s, a...)
 }
 
 // newBot returns a new empty bot

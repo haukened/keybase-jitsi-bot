@@ -19,9 +19,10 @@ type phoneNumber struct {
 }
 
 type jitsiMeeting struct {
-	Name  string
-	ID    string
-	Phone []phoneNumber
+	Name         string
+	CustomServer string
+	ID           string
+	Phone        []phoneNumber
 }
 
 func (j *jitsiMeeting) getJitsiName() error {
@@ -34,7 +35,10 @@ func (j *jitsiMeeting) getJitsiName() error {
 }
 
 func (j *jitsiMeeting) getURL() string {
-	return fmt.Sprintf("https://meet.jit.si/%s", j.Name)
+	if j.CustomServer == "" {
+		return fmt.Sprintf("https://meet.jit.si/%s", j.Name)
+	}
+	return fmt.Sprintf("%s/%s", j.CustomServer, j.Name)
 }
 
 func (j *jitsiMeeting) getPIN() string {

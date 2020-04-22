@@ -32,53 +32,48 @@ func (b *bot) chatHandler(m chat1.MsgSummary) {
 	}
 	// if this chat message is a payment, add it to the bot payments
 	if m.Content.Text.Payments != nil {
-		// there can be multiple payments on each message, iterate them
-		for _, payment := range m.Content.Text.Payments {
-			if strings.Contains(payment.PaymentText, b.k.Username) {
-				// if the payment is successful put log the payment for wallet closure
-				if payment.Result.ResultTyp__ == 0 && payment.Result.Error__ == nil {
-					var replyInfo = botReply{convID: m.ConvID, msgID: m.Id}
-					b.payments[*payment.Result.Sent__] = replyInfo
-				} else {
-					// if the payment fails, be sad
-					b.k.ReactByConvID(m.ConvID, m.Id, ":cry:")
-				}
-			}
-		}
+		b.handlePayment(m)
+		return
 	}
-	// Determine first if this is a command
+
+	// if its not a payment evaluate if this is a command at all
 	if strings.HasPrefix(m.Content.Text.Body, "!") || strings.HasPrefix(m.Content.Text.Body, "@") {
-		// determine the root command
-		words := strings.Fields(m.Content.Text.Body)
-		command := strings.Replace(words[0], "@", "", 1)
-		command = strings.Replace(command, "!", "", 1)
-		command = strings.ToLower(command)
-		// create the args
-		args := words[1:]
-		nargs := len(args)
-		switch command {
-		case b.k.Username:
-			fallthrough
-		case "jitsi":
-			if nargs == 0 {
-				b.setupMeeting(m.ConvID, m.Sender.Username, args, m.Channel.MembersType)
-			} else if nargs >= 1 {
-				// pop the subcommand off the front of the list
-				subcommand, args := args[0], args[1:]
-				switch subcommand {
-				case "meet":
-					b.setupMeeting(m.ConvID, m.Sender.Username, args, m.Channel.MembersType)
-				case "feedback":
-					b.sendFeedback(m.ConvID, m.Id, m.Sender.Username, args)
-				case "hello":
-					fallthrough
-				case "help":
-					b.sendWelcome(m.ConvID)
-				default:
-					return
-				}
-			}
-		default:
+		// first return if its not a command for me
+		if !strings.Contains(m.Content.Text.Body, b.cmd()) && !strings.Contains(m.Content.Text.Body, b.k.Username) {
+			return
+		}
+		// then check if this is the root command
+		if isRootCommand(m.Content.Text.Body, b.cmd(), b.k.Username) {
+			b.checkPermissionAndExecute("reader", m, b.handleMeeting)
+			return
+		}
+
+		// then check help and welcome (non-permissions)
+		// help
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "help") {
+			b.handleWelcome(m.ConvID)
+			return
+		}
+		// hello
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "hello") {
+			b.handleWelcome(m.ConvID)
+			return
+		}
+
+		// then check sub-command variants (permissions)
+		// meet
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "meet") {
+			b.checkPermissionAndExecute("reader", m, b.handleMeeting)
+			return
+		}
+		// feedback
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "feedback") {
+			b.checkPermissionAndExecute("reader", m, b.handleFeedback)
+			return
+		}
+		// config commands
+		if hasCommandPrefix(m.Content.Text.Body, b.cmd(), b.k.Username, "config") {
+			b.checkPermissionAndExecute("admin", m, b.handleConfigCommand)
 			return
 		}
 	}
@@ -95,7 +90,7 @@ func (b *bot) convHandler(m chat1.ConvSummary) {
 	default:
 		b.debug("New convID found %s, sending welcome message.", m.Id)
 	}
-	b.sendWelcome(m.Id)
+	b.handleWelcome(m.Id)
 }
 
 // this handles wallet events, like when someone send you money in chat
