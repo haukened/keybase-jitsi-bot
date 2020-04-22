@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"samhofi.us/x/keybase/types/chat1"
+	"samhofi.us/x/keybase/v2/types/chat1"
 )
 
 // this JSON pretty prints errors and debug

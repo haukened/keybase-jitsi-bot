@@ -12,5 +12,5 @@ require (
 	github.com/ugorji/go/codec v1.1.7
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/yaml.v2 v2.2.4 // indirect
-	samhofi.us/x/keybase v0.0.0-20200315012740-74fb4a152b35
+	samhofi.us/x/keybase/v2 v2.0.1
 )

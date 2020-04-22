@@ -1,6 +1,6 @@
 package main
 
-import "samhofi.us/x/keybase/types/chat1"
+import "samhofi.us/x/keybase/v2/types/chat1"
 
 // hold reply information when needed
 type botReply struct {

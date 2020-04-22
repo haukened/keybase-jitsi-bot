@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	"github.com/ugorji/go/codec"
-	"samhofi.us/x/keybase/types/chat1"
+	"samhofi.us/x/keybase/v2/types/chat1"
 )
 
 // KvStorePutStruct marshals an interface to JSON and sends to kvstore

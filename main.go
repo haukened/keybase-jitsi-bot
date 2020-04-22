@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/teris-io/shortid"
-	"samhofi.us/x/keybase"
-	"samhofi.us/x/keybase/types/chat1"
-	"samhofi.us/x/keybase/types/stellar1"
+	"samhofi.us/x/keybase/v2"
+	"samhofi.us/x/keybase/v2/types/chat1"
+	"samhofi.us/x/keybase/v2/types/stellar1"
 )
 
 // Bot holds the necessary information for the bot to work.

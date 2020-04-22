@@ -3,7 +3,7 @@ package main
 import (
 	"strings"
 
-	"samhofi.us/x/keybase/types/chat1"
+	"samhofi.us/x/keybase/v2/types/chat1"
 )
 
 // checkPermissionAndExecute will check the minimum required role for the permission and execute the handler function if allowed
