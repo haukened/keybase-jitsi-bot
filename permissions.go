@@ -13,7 +13,7 @@ func (b *bot) checkPermissionAndExecute(requiredRole string, m chat1.MsgSummary,
 	// currently this doesn't work due to a keybase bug unless you're in the role of resticted bot
 	// the workaround is to check the general channel the old way
 	// so first check the new way
-	conversation, err := b.k.ListMembersOfConversation(m.ConvID)
+	members, err := b.k.ListMembersOfConversation(m.ConvID)
 	if err != nil {
 		eid := b.logError(err)
 		b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
@@ -23,19 +23,19 @@ func (b *bot) checkPermissionAndExecute(requiredRole string, m chat1.MsgSummary,
 	// check if the length of the lists are zero
 	// it'll look like this:
 	// {"owners":[],"admins":[],"writers":[],"readers":[],"bots":[],"restrictedBots":[]}
-	if len(conversation.Members.Owners) == 0 &&
-		len(conversation.Members.Admins) == 0 &&
-		len(conversation.Members.Writers) == 0 &&
-		len(conversation.Members.Readers) == 0 &&
-		len(conversation.Members.Bots) == 0 &&
-		len(conversation.Members.RestrictedBots) == 0 {
+	if len(members.Owners) == 0 &&
+		len(members.Admins) == 0 &&
+		len(members.Writers) == 0 &&
+		len(members.Readers) == 0 &&
+		len(members.Bots) == 0 &&
+		len(members.RestrictedBots) == 0 {
 		channel := chat1.ChatChannel{
 			Name:        m.Channel.Name,
 			MembersType: m.Channel.MembersType,
 			TopicName:   "general",
 		}
 		// re-map the members using the workaround, in case you're not in the restricted bot role
-		conversation, err = b.k.ListMembersOfChannel(channel)
+		members, err = b.k.ListMembersOfChannel(channel)
 		if err != nil {
 			eid := b.logError(err)
 			b.k.ReactByConvID(m.ConvID, m.Id, "Error ID %s", eid)
@@ -59,7 +59,7 @@ func (b *bot) checkPermissionAndExecute(requiredRole string, m chat1.MsgSummary,
 	}
 
 	// then descend permissions from top down
-	for _, member := range conversation.Members.Owners {
+	for _, member := range members.Owners {
 		if strings.ToLower(member.Username) == strings.ToLower(m.Sender.Username) {
 			f(m)
 			return
@@ -72,7 +72,7 @@ func (b *bot) checkPermissionAndExecute(requiredRole string, m chat1.MsgSummary,
 		return
 	}
 	// admins
-	for _, member := range conversation.Members.Admins {
+	for _, member := range members.Admins {
 		if strings.ToLower(member.Username) == strings.ToLower(m.Sender.Username) {
 			f(m)
 			return
@@ -83,7 +83,7 @@ func (b *bot) checkPermissionAndExecute(requiredRole string, m chat1.MsgSummary,
 		return
 	}
 	// writers
-	for _, member := range conversation.Members.Writers {
+	for _, member := range members.Writers {
 		if strings.ToLower(member.Username) == strings.ToLower(m.Sender.Username) {
 			f(m)
 			return
@@ -94,7 +94,7 @@ func (b *bot) checkPermissionAndExecute(requiredRole string, m chat1.MsgSummary,
 		return
 	}
 	// readers
-	for _, member := range conversation.Members.Readers {
+	for _, member := range members.Readers {
 		if strings.ToLower(member.Username) == strings.ToLower(m.Sender.Username) {
 			f(m)
 			return
