@@ -24,11 +24,16 @@ Optional for keybase: (Your mileage may vary!)
  - `KEYBASE_SERVICE_ARGS="-enable-bot-lite-mode=1"`
  
 Used by this package: (Set the values you feel like, if you don't set them they won't be used.)
- - `BOT_DEBUG=true` This enables debugging to the console and logging chat.
- - `BOT_LOG_CONVID=<your keybase conversation id>` The keybase ConversationID you want the bot to send logs to (if you want the bot to log to keybase team chat).  If this value is not set, the bot will only log to the docker console.
- - `BOT_FEEDBACK_CONVID=<your keybase conversation id>` The keybase ConversationID where you want the bot to send feedback to. If this value is not set, the bot won't be able to send feedback, and will instead tell users you didn't configure feedback.
- - `BOT_FEEDBACK_TEAM_ADVERT="@team#channel"` The human readable name of the keybase team where the bot will send feedback.  This informs users where the feedback will be sent to in the bot command help menu when sending feedback.  If you don't set this, it will still work but users won't know where feedback goes to.
- - `BOT_KVSTORE_TEAM="<your team without the @symbol>"` This is the name of the team where the bot with store all settings in the keybase kvstore.  Its important that this is a private team that only you have access to, and the bot must be at least a writer in the team.
+ - `BOT_DEBUG=true` 
+   - This enables debugging to the console and logging chat.
+ - `BOT_LOG_CONVID=<your keybase conversation id>` 
+   - The keybase ConversationID you want the bot to send logs to (if you want the bot to log to keybase team chat).  If this value is not set, the bot will only log to the docker console.
+ - `BOT_FEEDBACK_CONVID=<your keybase conversation id>` 
+   - The keybase ConversationID where you want the bot to send feedback to. If this value is not set, the bot won't be able to send feedback, and will instead tell users you didn't configure feedback.
+ - `BOT_FEEDBACK_TEAM_ADVERT="@team#channel"` 
+   - The human readable name of the keybase team where the bot will send feedback.  This informs users where the feedback will be sent to in the bot command help menu when sending feedback.  If you don't set this, it will still work but users won't know where feedback goes to.
+ - `BOT_KVSTORE_TEAM="<your team without the @symbol>"` 
+   - This is the name of the team where the bot with store all settings in the keybase kvstore.  Its important that this is a private team that only you have access to, and the bot must be at least a writer in the team.
 
 This package requires the keybase binary installed on your system, and works on linux, macOS, and Windows 10
 
